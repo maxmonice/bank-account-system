@@ -3,6 +3,7 @@ import java.util.Scanner;
 
 public class UI {
     private static final Scanner sc = new Scanner(System.in);
+    static Database db = new Database();
 
     public void login() {
         System.out.println("===== Welcome To Polarity Bank! =====");
@@ -11,7 +12,7 @@ public class UI {
         System.out.print("Please Enter Your 6-Digit Pin: ");
         int accountPin = sc.nextInt();
         sc.nextLine();
-        BankAccount account = verification(accountId, accountPin);
+        BankAccount account = db.verifyAccount(accountId, accountPin);
 
         if (account != null) {
             start(account);
@@ -19,17 +20,6 @@ public class UI {
             System.out.println("Invalid Account ID or PIN!");
             login();
         }
-    }
-
-    public BankAccount verification(String accountId, int accountPin) {
-
-        // TODO: Replace with SQL lookup
-
-        return new BankAccount(
-                "Demo User",
-                5000,
-                accountId
-        );
     }
 
     public void start(BankAccount account) {
