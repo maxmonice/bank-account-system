@@ -1,6 +1,8 @@
 package Bank;
 
 public class BankAccount {
+    static Database db = new Database();
+
     private String accountName;
     private double accountBalance;
     private String accountId;
@@ -67,10 +69,12 @@ public class BankAccount {
             System.out.println("Your Balance Must Be At Least 3000!");
             return;
         }
-
-        setAccountBalance(total);
-        System.out.println("Your Balance Is Now " + total + "!");
-
+        if (db.updateBalance(accountId, total)) {
+            setAccountBalance(total);
+            System.out.println("Your Balance Is Now " + total + "!");
+        } else {
+            System.out.println("Deposit Failed! Your Balance Remains Unchanged.");
+        }
     }
 
     public void withdraw(double amount) {
@@ -88,9 +92,12 @@ public class BankAccount {
             return;
 
         }
-
-        setAccountBalance(total);
-        System.out.println("Your Balance Is Now " + total + "!");
+        if (db.updateBalance(accountId, total)) {
+            setAccountBalance(total);
+            System.out.println("Your Balance Is Now " + total + "!");
+        } else {
+            System.out.println("Withdrawal Failed! Your Balance Remains Unchanged.");
+        }
 
     }
 

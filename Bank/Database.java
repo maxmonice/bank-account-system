@@ -27,7 +27,7 @@ public class Database {
 
     public BankAccount verifyAccount(String accountId, int accountPin) {
 
-        String sql = "SELECT * FROM accounts WHERE account_id = ? AND pin = ?";
+        String sql = "SELECT account_name, balance, account_id " + "FROM accounts WHERE account_id = ? AND pin = ?";
 
         try (Connection con = connect()) {
 
@@ -48,11 +48,7 @@ public class Database {
                         double accountBalance = result.getDouble("balance");
                         String id = result.getString("account_id");
 
-                        return new BankAccount(
-                            accountName,
-                            accountBalance,
-                            id
-                        );
+                        return new BankAccount(accountName, accountBalance, id);
                     }
                 }
             }
@@ -64,26 +60,32 @@ public class Database {
         return null;
     }
 
-    public void updateBalance(String accountId, double newBalance) {
-
+    public boolean updateBalance(String accountId, double newBalance) {
         String sql = "UPDATE accounts SET balance = ? WHERE account_id = ?";
 
         try (Connection con = connect()) {
-
             if (con == null) {
-                return;
+                System.out.println("Database Connection Failed!");
+                return false;
             }
 
             try (PreparedStatement stmt = con.prepareStatement(sql)) {
-
                 stmt.setDouble(1, newBalance);
                 stmt.setString(2, accountId);
+                int rowsUpdated = stmt.executeUpdate();
 
-                stmt.executeUpdate();
+                if (rowsUpdated > 0) {
+                    return true;
+                } else {
+                    System.out.println("Balance Update Failed: Account Not Found!");
+                    return false;
+                }
             }
 
         } catch (SQLException e) {
+            System.out.println("Failed To Update Balance!");
             e.printStackTrace();
+            return false;
         }
     }
 }
